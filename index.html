@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Sticker Generator</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f2f2f2;
+text-align:center;
+padding:30px;
+}
+
+.container{
+background:white;
+padding:20px;
+width:420px;
+margin:auto;
+border-radius:10px;
+box-shadow:0px 0px 10px gray;
+}
+
+input{
+padding:8px;
+width:90%;
+margin:4px;
+}
+
+button{
+padding:10px 20px;
+background:#1e3a8a;
+color:white;
+border:none;
+cursor:pointer;
+margin-top:10px;
+}
+
+.print-btn{
+background:#16a34a;
+display:none;
+}
+
+/* STICKER */
+
+.sticker{
+margin-top:25px;
+display:none;
+border:1px solid black;
+width:380px;
+height:230px;
+position:relative;
+background:white;
+overflow:hidden;
+}
+
+/* MODEL STRIP */
+
+.model-strip{
+position:absolute;
+left:0;
+top:0;
+height:100%;
+width:50px;
+display:flex;
+justify-content:center;
+align-items:center;
+writing-mode:vertical-rl;
+transform:rotate(180deg);
+color:#2f3fa7;
+font-weight:bold;
+font-size:18px;
+}
+
+/* COMPANY STRIP (background removed) */
+
+.company-strip{
+position:absolute;
+left:50px;
+top:0;
+height:100%;
+width:35px;
+
+color:#2f3fa7;   /* text visible */
+background:transparent; /* blue removed */
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+writing-mode:vertical-rl;
+transform:rotate(180deg);
+
+font-weight:bold;
+font-size:13px;
+}
+
+/* LOGO */
+
+.logo{
+position:absolute;
+top:8px;
+left:95px;
+height:40px;
+}
+
+/* LEFT CONTENT */
+
+.content-left{
+position:absolute;
+left:95px;
+top:60px;
+width:155px;
+font-size:11px;
+text-align:left;
+}
+
+.content-left p{
+margin:0;
+}
+
+/* DEVICE INFO */
+
+.device-info{
+margin-top:5px;
+font-size:11px;
+}
+
+/* PRICE */
+
+.price{
+margin-top:4px;
+font-weight:bold;
+font-size:13px;
+color:#c00000;
+}
+
+/* RIGHT DETAILS */
+
+.content-right{
+position:absolute;
+right:10px;
+top:10px;
+width:120px;
+font-size:10px;
+text-align:left;
+line-height:14px;
+}
+
+/* QR CODE */
+
+#qrcode{
+position:absolute;
+right:10px;
+bottom:10px;
+width:110px;
+height:110px;
+}
+
+/* PRINT SETTINGS */
+
+@media print{
+
+body *{
+visibility:hidden;
+}
+
+*{
+-webkit-print-color-adjust: exact !important;
+print-color-adjust: exact !important;
+}
+
+#sticker, #sticker *{
+visibility:visible;
+}
+
+#sticker{
+position:absolute;
+left:0;
+top:0;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h3>Sticker Generator</h3>
+
+<input id="model" placeholder="Model Name">
+
+<input id="imei1" placeholder="IMEI 1">
+
+<input id="imei2" placeholder="IMEI 2">
+
+<input id="ram" placeholder="RAM Example: 4GB">
+
+<input id="rom" placeholder="ROM Example: 64GB">
+<input id="Category" placeholder="Category Example: B">
+
+<input id="price" placeholder="Price Example: 7999">
+
+<br>
+
+<button onclick="generateSticker()">Generate Sticker</button>
+
+<button class="print-btn" id="printBtn"
+onclick="printSticker()">Print Sticker</button>
+
+
+<div class="sticker" id="sticker">
+
+<div class="model-strip" id="modelShow"></div>
+
+<div class="company-strip">TECHFEEL SOFTWARE PVT. LTD.</div>
+
+<img class="logo"
+src="https://goatsoft.in/images/logo.png">
+
+
+<!-- LEFT SIDE -->
+
+<div class="content-left">
+
+<p id="imeiShow1"></p>
+<svg id="barcode1"></svg>
+
+<p id="imeiShow2"></p>
+<svg id="barcode2"></svg>
+
+<div class="device-info">
+
+<p id="ramShow"></p>
+
+<p id="romShow"></p>
+<p id="categoryShow"></p>
+
+<p>
+Support: 0120-4817269<br>
+www.goatsoft.in
+</p>
+
+<p class="price" id="priceShow"></p>
+
+</div>
+
+</div>
+
+
+<!-- RIGHT DETAILS -->
+
+<div class="content-right">
+
+<p><b>Refurbished & Packed by</b></p>
+
+<p>TECHFEEL SOFTWARE Pvt. Ltd</p>
+
+<p>
+BH-88 2nd Floor, Sector- 70<br>
+Noida GAUTAM BUDHA NAGAR UTTAR PARDESH INDIA- 201306
+</p>
+
+</div>
+
+
+<div id="qrcode"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+function generateSticker(){
+
+let model=document.getElementById("model").value;
+let imei1=document.getElementById("imei1").value;
+let imei2=document.getElementById("imei2").value;
+let ram=document.getElementById("ram").value;
+let rom=document.getElementById("rom").value;
+let category=document.getElementById("Category").value;
+let price=document.getElementById("price").value;
+
+if(model=="" || imei1=="" || imei2==""){
+alert("Please fill required fields");
+return;
+}
+
+document.getElementById("sticker").style.display="block";
+document.getElementById("printBtn").style.display="inline-block";
+
+document.getElementById("modelShow").innerHTML=model;
+document.getElementById("imeiShow1").innerHTML="IMEI1: "+imei1;
+document.getElementById("imeiShow2").innerHTML="IMEI2: "+imei2;
+document.getElementById("ramShow").innerHTML="RAM: "+ram;
+document.getElementById("romShow").innerHTML="ROM: "+rom;
+document.getElementById("categoryShow").innerHTML="Category: "+category;
+document.getElementById("priceShow").innerHTML="Price: ₹ "+price;
+
+
+/* BARCODE */
+
+JsBarcode("#barcode1", imei1,{
+format:"CODE128",
+width:1.1,
+height:30,
+displayValue:false,
+margin:0
+});
+
+JsBarcode("#barcode2", imei2,{
+format:"CODE128",
+width:1.1,
+height:30,
+displayValue:false,
+margin:0
+});
+
+
+/* QR DATA */
+
+let qrdata=
+
+"Model: "+model+
+"\nCompany: TECHFEEL SOFTWARE Pvt. Ltd"+
+"\nAddress: Sector 70 Noida"+
+"\nIMEI1: "+imei1+
+"\nIMEI2: "+imei2+
+"\nRAM: "+ram+
+"\nROM: "+rom+
+"\nCategory: "+category+
+"\nPrice: ₹"+price+
+"\nSupport: 0120-4817269"+
+"\nWebsite: www.goatsoft.in";
+
+
+document.getElementById("qrcode").innerHTML="";
+
+new QRCode(document.getElementById("qrcode"),{
+
+text:qrdata,
+width:110,
+height:110,
+correctLevel:QRCode.CorrectLevel.H
+
+});
+
+}
+
+function printSticker(){
+window.print();
+}
+
+</script>
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"e3c1c9af36de41759418005494a48906","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+
+</html>
